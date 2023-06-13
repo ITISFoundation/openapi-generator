@@ -33,11 +33,3 @@ build-generator: clean ## build openapi-generator
 	./mvnw clean install; \
 	cd $(CALL_DIR)
 
-openapi-generator-cli: ## run openapi-generator-cli
-	@unpacked_jdk=$$(ls $(JDK_DIR)); \
-	export PATH=$(JDK_DIR)/$${unpacked_jdk}/bin:$${PATH}; \
-	java -jar $(OPENAPI_GENERATOR_CLI) $*
-
-
-
-
