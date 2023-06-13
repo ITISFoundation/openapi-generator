@@ -31,7 +31,7 @@ if [ ! -f "${OPENAPI_GENERATOR_CLI}" ]; then
 fi
 
 export PATH=${JDK_DIR}:${PATH}
-java -jar ${OPENAPI_GENERATOR_CLI} $@
+java -jar ${OPENAPI_GENERATOR_CLI} "$@"
 
 
 
