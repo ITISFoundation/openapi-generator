@@ -26,7 +26,7 @@ JDK_DIR=${REPO_ROOT}/.jdk/$(ls ${REPO_ROOT}/.jdk)/bin
 OPENAPI_GENERATOR_CLI=${REPO_ROOT}/modules/openapi-generator-cli/target/openapi-generator-cli.jar
 
 if [ ! -f "${OPENAPI_GENERATOR_CLI}" ]; then
-  echo "It seems the generator wasn't built yet. To build it, call 'make build-generator' in the root of this repository"
+  echo "It seems the generator wasn't built yet. To build it, call 'make build-generator' from '${REPO_ROOT}'"
   exit 1
 fi
 
