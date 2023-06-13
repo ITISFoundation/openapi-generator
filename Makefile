@@ -7,7 +7,6 @@
 JDK_LINK := https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.7%2B7/OpenJDK17U-jdk_x64_linux_hotspot_17.0.7_7.tar.gz
 JDK_DIR := $(CURDIR)/.jdk
 OPENAPI_GENERATOR_CLI := $(CURDIR)/modules/openapi-generator-cli/target/openapi-generator-cli.jar
-export PATH := $(PATH):$(JDK_DIR)
 
 
 help: ## help on rule's targets
@@ -30,12 +29,12 @@ build-generator: clean ## build openapi-generator
 	rm $(JDK_DIR)/$${tar_archive}
 
 	unpacked_jdk=$$(ls $(JDK_DIR)); \
-	export PATH=$${PATH}:$(JDK_DIR)/$${unpacked_jdk}/bin; \
+	export PATH=$(JDK_DIR)/$${unpacked_jdk}/bin:$${PATH}; \
 	./mvnw clean install
 
 openapi-generator-cli: ## run openapi-generator-cli
 	@unpacked_jdk=$$(ls $(JDK_DIR)); \
-	export PATH=$${PATH}:$(JDK_DIR)/$${unpacked_jdk}/bin; \
+	export PATH=$(JDK_DIR)/$${unpacked_jdk}/bin:$${PATH}; \
 	java -jar $(OPENAPI_GENERATOR_CLI) $*
 
 
