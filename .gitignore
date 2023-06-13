@@ -37,6 +37,7 @@ nbactions.xml
 nb-configuration.xml
 .direnv/
 **/:w
+.jdk/*
 
 .settings
 
