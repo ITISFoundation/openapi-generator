@@ -28,9 +28,9 @@ build: ## build a docker image containing openapi-generator-cli and push it to d
 	@cp $(REPO_ROOT)/modules/openapi-generator-cli/target/openapi-generator-cli.jar $(OSPARC_DIR)/build-generator; \
 	cd $(OSPARC_DIR)/build-generator; \
 	docker build --build-arg buildkit=$(BUILDKIT_IMAGE) -t $(OPENAPI_GENERATOR_IMAGE)-$(BRANCH):$(OPENAPI_GENERATOR_IMAGE_VERSION) .
-	@echo "Run 'docker run $(OPENAPI_GENERATOR_IMAGE)-$(BRANCH):$(OPENAPI_GENERATOR_IMAGE_VERSION)' to play with image"
 	@rm $(REPO_ROOT)/osparc/build-generator/openapi-generator-cli.jar
 	$(MAKE) clean
+	@echo "Done generating docker image. Run 'docker run $(OPENAPI_GENERATOR_IMAGE)-$(BRANCH):$(OPENAPI_GENERATOR_IMAGE_VERSION)'."
 
 push: ## build a docker image containing openapi-generator-cli and push it to dockerhub
 	$(eval BRANCH := $(shell git rev-parse --abbrev-ref HEAD))
