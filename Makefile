@@ -2,32 +2,34 @@
 .DEFAULT_GOAL := help
 
 
-.PHONY: build-generator, clean, openapi-generator-cli help
+.PHONY: build-buildkit, build, build-openapi-generator-image help
 
 MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
-MKFILE_DIR := $(dir $(MKFILE_PATH))
+REPO_ROOT := $(dir $(MKFILE_PATH))
 CALL_DIR := $(CURDIR)
-JDK_LINK := https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.7%2B7/OpenJDK17U-jdk_x64_linux_hotspot_17.0.7_7.tar.gz
-JDK_DIR := $(MKFILE_DIR).jdk
-OPENAPI_GENERATOR_CLI := $(MKFILE_DIR)modules/openapi-generator-cli/target/openapi-generator-cli.jar
+OSPARC_DIR := $(REPO_ROOT)osparc
+OPENAPI_GENERATOR_CLI := $(REPO_ROOT)modules/openapi-generator-cli/target/openapi-generator-cli.jar
+CONTAINER_REPO := /tmp/openapi-generator
 
+BUILDKIT_IMAGE := itisfoundation/openapi-generator-buildkit
+OPENAPI_GENERATOR_IMAGE := itisfoundation/openapi-generator-cli
+N := 1
 
 help: ## help on rule's targets
 	@awk --posix 'BEGIN {FS = ":.*?## "} /^[[:alpha:][:space:]_-]+:.*?## / {printf "%-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-clean: ## clean up development environment
-	-rm -fr $(JDK_DIR);
-	
-build-generator: clean ## build openapi-generator
-	mkdir $(JDK_DIR)
-	wget -P $(JDK_DIR) $(JDK_LINK); \
-	tar_archive=$$(ls $(JDK_DIR)); \
-	tar -xf $(JDK_DIR)/$${tar_archive} -C $(JDK_DIR); \
-	rm $(JDK_DIR)/$${tar_archive}
+build-buildkit: 
+	cd $(OSPARC_DIR)/buildkit; \
+	docker build -t $(BUILDKIT_IMAGE) .
 
-	unpacked_jdk=$$(ls $(JDK_DIR)); \
-	export PATH=$(JDK_DIR)/$${unpacked_jdk}/bin:$${PATH}; \
-	cd $(MKFILE_DIR); \
-	./mvnw clean install; \
-	cd $(CALL_DIR)
+build: ## build openapi-generator
+	docker run -v ${REPO_ROOT}:${CONTAINER_REPO} -w ${CONTAINER_REPO} --rm $(BUILDKIT_IMAGE):latest ./mvnw clean install
 
+build-openapi-generator-image: build ## build a docker image containing openapi-generator-cli
+	$(eval BRANCH := $(shell git rev-parse --abbrev-ref HEAD))
+	echo "Branch: $(BRANCH)"
+	@cp $(REPO_ROOT)modules/openapi-generator-cli/target/openapi-generator-cli.jar $(OSPARC_DIR)/build-generator; \
+	cd $(OSPARC_DIR)/build-generator; \
+	docker build -t $(OPENAPI_GENERATOR_IMAGE)/$(BRANCH) .
+	@echo "Run 'docker run $(OPENAPI_GENERATOR_IMAGE)/$(BRANCH)' to play with image"
+	@rm $(REPO_ROOT)osparc/build-generator/openapi-generator-cli.jar
