@@ -16,10 +16,8 @@ help: ## help on rule's targets
 	@awk --posix 'BEGIN {FS = ":.*?## "} /^[[:alpha:][:space:]_-]+:.*?## / {printf "%-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 clean: ## clean up development environment
-	@if [ -d $(JDK_DIR) ]; then \
-		rm -fr $(JDK_DIR); \
-	fi
-
+	-rm -fr $(JDK_DIR);
+	
 build-generator: clean ## build openapi-generator
 	mkdir $(JDK_DIR)
 	wget -P $(JDK_DIR) $(JDK_LINK); \
