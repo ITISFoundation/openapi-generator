@@ -12,15 +12,16 @@ def modify_single_doc_file(file: Path):
     txt = txt.replace('YOUR_PASSWORD','YOUR_API_SECRET_HERE')
     txt = txt.replace('{{{basePath}}}','https://api.osparc.io')
     txt = txt.replace('{{basePath}}','https://api.osparc.io')
-    if not txt.endswith("\n"):
-        txt += "\n"
 
     lines = txt.splitlines()
     for idx, line in enumerate(lines):
         if line.startswith("```python"):
             lines[idx] = "\n" + line
     txt = "\n".join(lines)
-    
+
+    if not txt.endswith("\n"):
+        txt += "\n"
+
     file.write_text(txt)
     
 
