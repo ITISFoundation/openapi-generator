@@ -3,17 +3,23 @@ from argparse import ArgumentParser
 import logging
 
 
-def lint_single_file(file: Path):
+def modify_single_doc_file(file: Path):
     logging.info(f"formatting {file}")
     if not file.is_file():
         raise RuntimeError(f"{file} is not a file")
     txt = file.read_text()
-    
-    #txt = txt.replace('\n','\n\n')
     txt = txt.replace('YOUR_USERNAME','YOUR_API_KEY_HERE')
     txt = txt.replace('YOUR_PASSWORD','YOUR_API_SECRET_HERE')
     txt = txt.replace('{{{basePath}}}','https://api.osparc.io')
     txt = txt.replace('{{basePath}}','https://api.osparc.io')
+    if not txt.endswith("\n"):
+        txt += "\n"
+
+    lines = txt.splitlines()
+    for idx, line in enumerate(lines):
+        if line.startswith("```python"):
+            lines[idx] = "\n" + line
+    txt = "\n".join(lines)
     
     file.write_text(txt)
     
@@ -32,7 +38,7 @@ if __name__ == '__main__':
     if path.is_dir():
         for file in path.glob('**/*'):
             if file.is_file() and args.doc_match in file.name:
-                lint_single_file(file)
+                modify_single_doc_file(file)
     else:
-        lint_single_file(path)
+        modify_single_doc_file(path)
     
