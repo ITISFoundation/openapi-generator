@@ -3,6 +3,7 @@
 {{>partial_header}}
 
 from setuptools import setup, find_packages  # noqa: H301
+from pathlib import Path
 
 NAME = "{{{projectName}}}"
 VERSION = "{{packageVersion}}"
@@ -23,22 +24,29 @@ REQUIRES.append("aiohttp >= 3.0.0")
 {{#tornado}}
 REQUIRES.append("tornado>=4.2,<5")
 {{/tornado}}
+README = Path("README.md").read_text()
 
 setup(
     name=NAME,
     version=VERSION,
     description="{{appName}}",
-    author="{{#infoName}}{{infoName}}{{/infoName}}{{^infoName}}OpenAPI Generator community{{/infoName}}",
-    author_email="{{#infoEmail}}{{infoEmail}}{{/infoEmail}}{{^infoEmail}}team@openapitools.org{{/infoEmail}}",
+    author="pcrespov, bisgaard-itis",
+    author_email="support@osparc.io",
     url="{{packageUrl}}",
     keywords=["OpenAPI", "OpenAPI-Generator", "{{{appName}}}"],
     install_requires=REQUIRES,
     packages=find_packages(exclude=["test", "tests"]),
     include_package_data=True,
-    {{#licenseInfo}}license="{{licenseInfo}}",
-    {{/licenseInfo}}long_description="""\
-    {{appDescription}}  # noqa: E501
-    """
+    long_description=README,
+    long_description_content_type="text/markdown",
+    license="MIT",
+    classifiers=[
+        "Development Status :: 3 - Alpha",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3",
+        "Operating System :: OS Independent",
+        "Natural Language :: English",
+    ],
 )
 {{/hasMore}}
 {{/apis}}
