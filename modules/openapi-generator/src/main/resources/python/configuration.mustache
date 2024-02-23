@@ -209,7 +209,7 @@ class Configuration(object):
         self.retries = urllib3.Retry(
             total=max_retries,
             backoff_factor=3.0,
-            status_forcelist={413,429,503,504},
+            status_forcelist={429,503,504},
             respect_retry_after_header=True,
             raise_on_status=True
         )
