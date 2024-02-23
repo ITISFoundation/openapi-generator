@@ -94,7 +94,9 @@ class Configuration(object):
     def __init__(self, host="https://api.osparc.io",
                  api_key=None, api_key_prefix=None,
                  username=None, password=None,
-                 signing_info=None):
+                 signing_info=None, 
+                 *, 
+                 max_retries: int = 4):
         """Constructor
         """
         self.host = host
@@ -204,7 +206,13 @@ class Configuration(object):
         self.safe_chars_for_path_param = ''
         """Safe chars for path_param
         """
-        self.retries = None
+        self.retries = urllib3.Retry(
+            total=max_retries,
+            backoff_factor=3.0,
+            status_forcelist={413,429,503,504},
+            respect_retry_after_header=True,
+            raise_on_status=True
+        )
         """Adding retries to override urllib3 default value 3
         """
         # Disable client side validation
