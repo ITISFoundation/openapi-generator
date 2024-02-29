@@ -10,6 +10,7 @@ import multiprocessing
 {{/asyncio}}
 import sys
 import urllib3
+from typing import Set
 
 import six
 from six.moves import http_client as httplib
@@ -96,7 +97,11 @@ class Configuration(object):
                  username=None, password=None,
                  signing_info=None, 
                  *, 
-                 max_retries: int = 4):
+                 retry_max_count: int = 4,
+                 retry_methods: Set[str] = {"DELETE", "GET", "HEAD", "OPTIONS", "PUT", "TRACE", "POST", "PATCH"},
+                 retry_status_codes: Set[int] = {429,503,504},
+                 retry_backoff_factor = 4.0
+                 ):
         """Constructor
         """
         self.host = host
@@ -207,9 +212,10 @@ class Configuration(object):
         """Safe chars for path_param
         """
         self.retries = urllib3.Retry(
-            total=max_retries,
-            backoff_factor=4.0,
-            status_forcelist={429,503,504},
+            total=retry_max_count,
+            backoff_factor=retry_backoff_factor,
+            status_forcelist=retry_status_codes,
+            allowed_methods=retry_methods,
             respect_retry_after_header=True,
             raise_on_status=True
         )
