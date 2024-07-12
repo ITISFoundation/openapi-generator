@@ -9,7 +9,6 @@ import re  # noqa: F401
 # python 2 and python 3 compatibility library
 import six
 
-from {{packageName}}.api_client import ApiClient
 from {{packageName}}.exceptions import (
     ApiTypeError,
     ApiValueError
@@ -24,9 +23,7 @@ class {{classname}}(object):
     Do not edit the class manually.
     """
 
-    def __init__(self, api_client=None):
-        if api_client is None:
-            api_client = ApiClient()
+    def __init__(self, api_client):
         self.api_client = api_client
 {{#operation}}
 
